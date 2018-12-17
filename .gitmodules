@@ -1,0 +1,3 @@
+[submodule "scripts/tellolib"]
+	path = scripts/tellolib
+	url = https://github.com/dji-sdk/Tello-Python.git

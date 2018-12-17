@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>ros_tello</name>
+  <version>0.0.1</version>
+  <description>The tello ros driver Package</description>
+
+  <maintainer email="yuokamoto1988@gmail.com">Yu Okamoto</maintainer>
+  <author email="yuokamoto1988@gmail.com">Yu Okamoto</author>
+
+  <license>Commercial</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  
+  <depend>rospy</depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>sensor_msgs</depend>
+
+</package>
