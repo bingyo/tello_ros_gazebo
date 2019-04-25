@@ -7,12 +7,13 @@
 #     Author: Yu Okamoto
 # Brief: tello ros driver using dji-sdk
 
-# import math
+import math
 # import numpy as np
 import rospy
 from std_msgs.msg import Int8
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Image
+from sensor_msgs.msg import Imu
 
 from tellolib.Tello_Video.tello import Tello
 from tellolib.Tello_Video.tello_control_ui import TelloUI
@@ -22,6 +23,8 @@ import threading
 import struct
 import cv2
 from cv_bridge import CvBridge, CvBridgeError
+
+import ast
 
 # copied from https://github.com/hanyazou/TelloPy
 from protocol import *
@@ -48,6 +51,7 @@ class TelloROSDriver(object):
         
         self._img_pub = rospy.Publisher('image_raw', Image, queue_size=10)
         self._cmd_vel_sub = rospy.Subscriber('cmd_vel', Twist, self._cmd_vel_sub_cb)
+        self._imu_pub = rospy.Publisher('imu/data_raw', Imu, queue_size=10)
         self._mode_sub = rospy.Subscriber('mode', Int8, self._mode_sub_cb)
 
         # start a thread that constantly pools the video sensor for
@@ -55,7 +59,7 @@ class TelloROSDriver(object):
         self.stopEvent = threading.Event()
         self.thread = threading.Thread(target=self.videoLoop, args=())
         self.thread.start()
-    
+
     def videoLoop(self):
         """
         COPY and modified from tello_control_ui.py in Tello-Python
@@ -66,6 +70,8 @@ class TelloROSDriver(object):
         try:
             # start the thread that get GUI image and drwa skeleton 
             time.sleep(0.5)
+            angular_tmp = [0.0] * 3
+            t_tmp = time.time()#float(rospy.Time.now())
             while not self.stopEvent.is_set():  
                 start = time.time()              
                 # read the frame for GUI show
@@ -77,11 +83,46 @@ class TelloROSDriver(object):
                 self.frame = cv2.bilateralFilter(self.frame, 5, 50, 100)  
                 self._img_pub.publish(self.bridge.cv2_to_imgmsg(self.frame, "rgb8"))
                 
-                time.sleep(0.04) #todo cant find reason why quality less than tiker
+                time.sleep(0.02)##time.sleep(0.04) #todo cant find reason why quality less than tiker
                 # print time.time() - start
                 # wait = 0.05 - (time.time() - start)
                 # if wait > 0:
                 #     time.sleep(wait)
+
+                response, ip = self._tello.socket.recvfrom(1024)
+                if response == 'ok':
+                    continue
+
+                response = response.strip(';\r\n')
+                response = response.replace(';', "','")#split(';')#replace(';', )
+                response = response.replace(':', "':'")
+                response = "{'" + response + "'}"
+                dic = ast.literal_eval(response)
+                imuMsg = Imu()
+                imuMsg.linear_acceleration.x = float(dic['agx']) / 100.0
+                imuMsg.linear_acceleration.y = float(dic['agy']) / 100.0
+                imuMsg.linear_acceleration.z = float(dic['agz']) / 100.0
+                dt = time.time() - t_tmp
+                t_tmp = time.time()
+                angular_roll = float(dic['roll'])
+                angular_pitch = float(dic['pitch'])
+                angular_yaw = float(dic['yaw'])
+                if (angular_yaw - angular_tmp[2]) > 180:#minus -> plus
+                     angular_yaw = angular_yaw - 360
+                elif (angular_yaw - angular_tmp[2]) < -180:#plus -> minus
+                     angular_yaw = angular_yaw + 360
+
+                imuMsg.angular_velocity.x = math.radians(angular_roll - angular_tmp[1]) / dt
+                imuMsg.angular_velocity.y = math.radians(angular_pitch - angular_tmp[0]) / dt
+                imuMsg.angular_velocity.z = math.radians(angular_yaw - angular_tmp[2]) / dt
+                angular_tmp[0] = float(dic['pitch'])
+                angular_tmp[1] = float(dic['roll'])
+                angular_tmp[2] = float(dic['yaw'])
+                imuMsg.header.stamp = rospy.Time.now()
+                imuMsg.header.frame_id = 'base_imu_link'
+                self._imu_pub.publish(imuMsg)
+                #print(dic['bat'])
+                #self._battery_pub.publish(battery_data)
 
         except RuntimeError, e:
             rospy.loginfo('caught a RuntimeError for gettng video')
@@ -178,7 +219,7 @@ class TelloROSDriver(object):
         del self._tello
 
 def main():
-    tello = Tello('', 8889) 
+    tello = Tello('', 8890) 
 
     rospy.init_node('tello_control')
     node = TelloROSDriver(tello)

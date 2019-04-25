@@ -4,5 +4,9 @@
     <group ns="$(arg name)">
         <node pkg="ros_tello" name="tello" type="ros_tello.py" output="screen"/>
     	<node name="republish" type="republish" pkg="image_transport" output="screen" args="raw in:=image_raw compressed out:=image_raw" />
+        <node pkg="imu_filter_madgwick" name="imu_filter" type="imu_filter_node" output="screen">
+            <param name="use_mag" value="false"/>
+        </node>
+        <node pkg="rviz" name="rviz" type="rviz" args="-d $(find ros_tello)/config/tello.rviz"/>
     </group>
 </launch>
