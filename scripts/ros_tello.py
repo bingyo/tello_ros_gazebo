@@ -81,7 +81,10 @@ class TelloROSDriver(object):
 
                 # smoothing filter
                 self.frame = cv2.bilateralFilter(self.frame, 5, 50, 100)  
-                self._img_pub.publish(self.bridge.cv2_to_imgmsg(self.frame, "rgb8"))
+                img_msg = self.bridge.cv2_to_imgmsg(self.frame, "rgb8")
+                img_msg.header.stamp = rospy.Time.now()
+                img_msg.header.frame_id = "world"
+                self._img_pub.publish(img_msg)
                 
                 time.sleep(0.02)##time.sleep(0.04) #todo cant find reason why quality less than tiker
                 # print time.time() - start
@@ -119,7 +122,8 @@ class TelloROSDriver(object):
                 angular_tmp[1] = float(dic['roll'])
                 angular_tmp[2] = float(dic['yaw'])
                 imuMsg.header.stamp = rospy.Time.now()
-                imuMsg.header.frame_id = 'base_imu_link'
+                imuMsg.header.frame_id = 'world'
+                imuMsg.orientation.w = 1
                 self._imu_pub.publish(imuMsg)
                 #print(dic['bat'])
                 #self._battery_pub.publish(battery_data)
