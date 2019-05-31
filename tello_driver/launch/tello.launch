@@ -2,8 +2,8 @@
 <launch>
     <arg name="name" default="tello" />
     <group ns="$(arg name)">
-        <node pkg="ros_tello" name="tello" type="ros_tello.py" output="screen"/>
+        <node pkg="tello_driver" name="tello" type="ros_tello.py" output="screen"/>
     	<node name="republish" type="republish" pkg="image_transport" output="screen" args="raw in:=image_raw compressed out:=image_raw" />
-        <node pkg="rviz" name="rviz" type="rviz" args="-d $(find ros_tello)/config/tello.rviz"/>
+        <node pkg="rviz" name="rviz" type="rviz" args="-d $(find tello_driver)/config/tello.rviz"/>
     </group>
 </launch>
