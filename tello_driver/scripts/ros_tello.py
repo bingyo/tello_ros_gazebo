@@ -78,6 +78,8 @@ class TelloROSDriver(object):
                     response = response.replace(':', "':'")
                     response = "{'" + response + "'}"
                     dic = ast.literal_eval(response)
+                    if not 'agx' in dic:
+                        continue
                     imuMsg.linear_acceleration.x = float(dic['agx']) / 102.0 #102=1000/9.8
                     imuMsg.linear_acceleration.y = float(dic['agy']) / 102.0
                     imuMsg.linear_acceleration.z = float(dic['agz']) / 102.0
