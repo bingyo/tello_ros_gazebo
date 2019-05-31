@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>ros_tello</name>
+  <name>tello_driver</name>
   <version>0.0.1</version>
   <description>The tello ros driver Package</description>
 
-  <maintainer email="yuokamoto1988@gmail.com">Yu Okamoto</maintainer>
-  <author email="yuokamoto1988@gmail.com">Yu Okamoto</author>
+  <maintainer email="hirokibingo.ks@gmail.com">Hiroki BINGO</maintainer>
+  <author email="hirokibingo.ks@gmail.com">Hiroki BINGO</author>
 
   <license>Commercial</license>
 
