@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <!-- Start Gazebo with wg world running in (max) realtime -->
+  <include file="$(find hector_gazebo_worlds)/launch/willow_garage.launch"/>
+
+  <!-- Spawn simulated quadrotor uav -->
+  <include file="$(find hector_quadrotor_gazebo)/launch/spawn_quadrotor.launch" >
+    <arg name="model" value="$(find tello_description)/urdf/quadrotor_with_cam.gazebo.xacro"/>
+    <arg name="controllers" value="
+        controller/attitude
+        controller/velocity
+        controller/position
+        "/>
+  </include>
+
+
+  <!-- Start rviz visualization with preset config -->
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find tello_driver)/config/tello_simulation.rviz"/>
+
+  <node name="orb_slam2_mono" pkg="orb_slam2_ros"
+          type="orb_slam2_ros_mono" args="
+          $(find orb_slam2_ros)/orb_slam2/Vocabulary/ORBvoc.txt
+          $(find tello_driver)/config/gazebo_mono.yaml"
+          output="screen">
+      <remap from="/camera/image_raw" to="/front_cam/camera/image" />
+      <param name="publish_pointcloud" type="bool" value="true" />
+      <param name="publish_pose" type="bool" value="true" />
+      <param name="localize_only" type="bool" value="false" />
+      <param name="reset_map" type="bool" value="false" />
+      <param name="pointcloud_frame_id" type="string" value="map" />
+      <param name="camera_frame_id" type="string" value="camera_link" />
+      <param name="min_num_kf_in_map" type="int" value="5" />
+  </node>
+
+</launch>
