@@ -19,5 +19,11 @@
             <param name="camera_frame_id" type="string" value="camera_link" />
             <param name="min_num_kf_in_map" type="int" value="5" />
         </node>
+
+	<node pkg="tello_driver" type="path.py" name="path"/>
+
+	<node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
+		<remap from="cloud_in" to="/tello/orb_slam2_mono/map_points" />
+        </node>
     </group>
 </launch>

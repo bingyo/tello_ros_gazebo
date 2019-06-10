@@ -3,7 +3,7 @@
 <launch>
 
   <!-- Start Gazebo with wg world running in (max) realtime -->
-  <include file="$(find hector_gazebo_worlds)/launch/willow_garage.launch"/>
+  <include file="$(find tello_gazebo_worlds)/launch/school.launch"/>
 
   <!-- Spawn simulated quadrotor uav -->
   <include file="$(find hector_quadrotor_gazebo)/launch/spawn_quadrotor.launch" >
@@ -29,9 +29,15 @@
       <param name="publish_pose" type="bool" value="true" />
       <param name="localize_only" type="bool" value="false" />
       <param name="reset_map" type="bool" value="false" />
-      <param name="pointcloud_frame_id" type="string" value="map" />
+      <param name="pointcloud_frame_id" type="string" value="world" />
       <param name="camera_frame_id" type="string" value="camera_link" />
       <param name="min_num_kf_in_map" type="int" value="5" />
+  </node>
+
+  <node pkg="tello_driver" type="path.py" name="path"/>
+
+  <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
+      <remap from="cloud_in" to="/orb_slam2_mono/map_points" />
   </node>
 
 </launch>
