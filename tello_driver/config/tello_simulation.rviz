@@ -6,6 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /Path1
+        - /Image1
       Splitter Ratio: 0.5
     Tree Height: 322
   - Class: rviz/Selection
@@ -170,7 +171,7 @@ Visualization Manager:
       Value: true
     - Class: rviz/Image
       Enabled: true
-      Image Topic: /orb_slam2_mono/debug_image
+      Image Topic: /tello/orb_slam2_mono/debug_image
       Max Value: 1
       Median window: 5
       Min Value: 0
