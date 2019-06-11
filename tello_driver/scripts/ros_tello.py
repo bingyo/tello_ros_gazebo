@@ -7,6 +7,7 @@ from std_msgs.msg import Int8
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Image
 from sensor_msgs.msg import Imu
+from hector_uav_msgs.srv import EnableMotors
 
 from tellolib.Tello_Video.tello import Tello
 from tellolib.Tello_Video.tello_control_ui import TelloUI
@@ -45,7 +46,7 @@ class TelloROSDriver(object):
         self._img_pub = rospy.Publisher('image_raw', Image, queue_size=10)
         self._cmd_vel_sub = rospy.Subscriber('cmd_vel', Twist, self._cmd_vel_sub_cb)
         self._imu_pub = rospy.Publisher('imu/data_raw', Imu, queue_size=1)
-        self._mode_sub = rospy.Subscriber('mode', Int8, self._mode_sub_cb)
+        self._mode_srv = rospy.Service('enable_motors', EnableMotors, self._mode_srv_cb)
 
         # start a thread that constantly pools the video sensor for
         # the most recently read frame
@@ -135,15 +136,17 @@ class TelloROSDriver(object):
     def _cmd_vel_sub_cb(self, msg):
         self._cmd_vel = msg
 
-    def _mode_sub_cb(self, msg):
+    def _mode_srv_cb(self, req):
 
-        self._mode = msg.data
+        self._mode = req.enable
         self._cmd_vel = Twist()
 
         if self._mode == Mode.LANDED:
             self._tello.land()
         elif self._mode == Mode.FLYING:
             self._tello.takeoff()
+
+        return True
 
     def send_packet(self, pkt):
         """Send_packet is used to send a command packet to the drone."""
