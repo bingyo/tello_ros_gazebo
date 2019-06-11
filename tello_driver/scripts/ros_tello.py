@@ -1,11 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
-# tello_control.py
-#
-# Created on: Dec 16, 2018
-#     Author: Yu Okamoto
-# Brief: tello ros driver using dji-sdk
 
 import math
 # import numpy as np
