@@ -119,9 +119,7 @@ class TelloROSDriver(object):
         try:
             # start the thread that get GUI image and drwa skeleton 
             time.sleep(0.5)
-            #t_tmp = time.time()
-            #angular_tmp = [0.0] * 3
-            #imuMsg = Imu()
+
             while not self.stopEvent.is_set():  
                 #start = time.time()              
                 # read the frame for GUI show
@@ -134,41 +132,7 @@ class TelloROSDriver(object):
                 imgMsg = self.bridge.cv2_to_imgmsg(self.frame, "rgb8")
                 imgMsg.header.stamp = rospy.Time.now()
                 imgMsg.header.frame_id = "world"
-                #self._img_pub.publish(imgMsg)
 
-                """response = self._tello.get_response()
-                if response is None:
-                    continue
-                elif len(response) > 10:
-                    response = response.strip(';\r\n')
-                    response = response.replace(';', "','")
-                    response = response.replace(':', "':'")
-                    response = "{'" + response + "'}"
-                    dic = ast.literal_eval(response)
-                    imuMsg.linear_acceleration.x = float(dic['agx']) / 102.0
-                    imuMsg.linear_acceleration.y = float(dic['agy']) / 102.0
-                    imuMsg.linear_acceleration.z = float(dic['agz']) / 102.0
-                    dt = time.time() - t_tmp
-                    t_tmp = time.time()
-                    angular_roll = float(dic['roll'])
-                    angular_pitch = float(dic['pitch'])
-                    angular_yaw = float(dic['yaw'])
-                    if (angular_yaw - angular_tmp[2]) > 180:#minus -> plus
-                         angular_yaw = angular_yaw - 360.0
-                    elif (angular_yaw - angular_tmp[2]) < -180:#plus -> minus
-                         angular_yaw = angular_yaw + 360.0
-
-                    imuMsg.angular_velocity.x = math.radians(angular_roll - angular_tmp[1]) / dt
-                    imuMsg.angular_velocity.y = math.radians(angular_pitch - angular_tmp[0]) / dt
-                    imuMsg.angular_velocity.z = math.radians(angular_yaw - angular_tmp[2]) / dt
-                    angular_tmp[0] = float(dic['pitch'])
-                    angular_tmp[1] = float(dic['roll'])
-                    angular_tmp[2] = float(dic['yaw'])
-                    imuMsg.header.stamp = imgMsg.header.stamp
-                    imuMsg.header.frame_id = 'imu4'
-                    ##imuMsg.orientation.w = 1
-                    self._imu_pub.publish(imuMsg)
-                """
                 self._img_pub.publish(imgMsg)
                 time.sleep(0.04)#todo cant find reason why quality less than tiker
 
