@@ -5,6 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
+        - /Path1
       Splitter Ratio: 0.5
     Tree Height: 322
   - Class: rviz/Selection
@@ -147,13 +148,13 @@ Visualization Manager:
     - Alpha: 1
       Buffer Length: 1
       Class: rviz/Path
-      Color: 170; 0; 0
+      Color: 239; 41; 41
       Enabled: true
       Head Diameter: 0.30000001192092896
       Head Length: 0.20000000298023224
       Length: 0.30000001192092896
-      Line Style: Lines
-      Line Width: 0.029999999329447746
+      Line Style: Billboards
+      Line Width: 0.009999999776482582
       Name: Path
       Offset:
         X: 0
@@ -207,25 +208,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 4.9283647537231445
+      Distance: 1.9743741750717163
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 1.7279572486877441
-        Y: -0.2322414219379425
-        Z: -0.5952727198600769
+        X: 0.003595071379095316
+        Y: 0.14796175062656403
+        Z: 0.2085905522108078
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6403989791870117
+      Pitch: 0.44479697942733765
       Target Frame: base_stabilized
       Value: Orbit (rviz)
-      Yaw: 3.1304116249084473
+      Yaw: 4.6554107666015625
     Saved: ~
 Window Geometry:
   Camera:
