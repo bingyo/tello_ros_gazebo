@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <launch>
-
+	
   <!-- Start Gazebo with wg world running in (max) realtime -->
   <include file="$(find tello_gazebo_worlds)/launch/school.launch"/>
 
@@ -15,6 +15,8 @@
         "/>
   </include>
 
+  <arg name="name" default="tello" />
+        <group ns="$(arg name)">
 
   <!-- Start rviz visualization with preset config -->
   <node pkg="rviz" type="rviz" name="rviz" args="-d $(find tello_driver)/config/tello_simulation.rviz"/>
@@ -39,5 +41,7 @@
   <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
       <remap from="cloud_in" to="/orb_slam2_mono/map_points" />
   </node>
+
+  </group>
 
 </launch>
