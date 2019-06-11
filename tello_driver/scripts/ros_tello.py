@@ -143,10 +143,13 @@ class TelloROSDriver(object):
 
         if self._mode == Mode.LANDED:
             self._tello.land()
+            time.sleep(0.7)
+            self._tello.land()
         elif self._mode == Mode.FLYING:
             self._tello.takeoff()
 
         return True
+
 
     def send_packet(self, pkt):
         """Send_packet is used to send a command packet to the drone."""
