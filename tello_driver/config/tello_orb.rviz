@@ -92,7 +92,7 @@ Visualization Manager:
       Head Length: 0.30000001192092896
       Head Radius: 0.10000000149011612
       Name: Pose
-      Shaft Length: 1
+      Shaft Length: 0.20000000298023224
       Shaft Radius: 0.05000000074505806
       Shape: Arrow
       Topic: /tello/orb_slam2_mono/pose
