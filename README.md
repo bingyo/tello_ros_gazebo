@@ -7,6 +7,7 @@ ROS Tello driver and gazebo
 - Fix intrinsic and extrinsic parameters of camera
 - Fix scale
 - Show path plan 
+- Add calibration pose
 
 ### Reference
 
