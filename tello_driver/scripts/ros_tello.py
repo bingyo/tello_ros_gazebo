@@ -3,10 +3,10 @@
 import math
 # import numpy as np
 import rospy
-from std_msgs.msg import Int8
+from std_msgs.msg import Float32
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Image
-from sensor_msgs.msg import Imu
+from sensor_msgs.msg import Imu, Range, BatteryState
 from hector_uav_msgs.srv import EnableMotors
 
 from tellolib.Tello_Video.tello import Tello
@@ -44,6 +44,8 @@ class TelloROSDriver(object):
         self.bridge = CvBridge()
         
         self._img_pub = rospy.Publisher('image_raw', Image, queue_size=10)
+        self._tof_pub = rospy.Publisher('tof_height', Range, queue_size=1)
+        self._bat_pub = rospy.Publisher('battery', BatteryState, queue_size=1)
         self._cmd_vel_sub = rospy.Subscriber('cmd_vel', Twist, self._cmd_vel_sub_cb)
         self._imu_pub = rospy.Publisher('imu/data_raw', Imu, queue_size=1)
         self._mode_srv = rospy.Service('enable_motors', EnableMotors, self._mode_srv_cb)
@@ -60,6 +62,8 @@ class TelloROSDriver(object):
         t_tmp = time.time()
         angular_tmp = [0.0] * 3
         imuMsg = Imu()
+        heightMsg = Range()
+        batMsg = BatteryState()
         try:
             time.sleep(0.5)
             while not self.stopEvent.is_set():
@@ -97,6 +101,23 @@ class TelloROSDriver(object):
                     imuMsg.header.frame_id = 'world'
                     ##imuMsg.orientation.w = 1
                     self._imu_pub.publish(imuMsg)
+
+                    heightMsg.header.stamp = rospy.Time.now()
+                    heightMsg.header.frame_id = 'world'
+                    heightMsg.radiation_type = heightMsg.INFRARED
+                    heightMsg.field_of_view = 0
+                    heightMsg.max_range = 30
+                    heightMsg.min_range = 0.3
+                    heightMsg.range = int(dic['tof']) * 0.01 # cm
+                    self._tof_pub.publish(heightMsg)
+
+                    batMsg.header.stamp = rospy.Time.now()
+                    batMsg.header.frame_id = 'world'
+                    batMsg.voltage = 3.8
+                    batMsg.design_capacity = 1.1
+                    batMsg.percentage = float(dic['bat']) * 0.01
+                    self._bat_pub.publish(batMsg)
+
                     time.sleep(0.004)
 
         except RuntimeError, e:
