@@ -26,8 +26,8 @@ class ForestMotion:
         self.odom_update_flag_ = False
         self.task_start_time_ = rospy.Time.now()
 
-        #self.vel_pub_ = rospy.Publisher("/cmd_vel", Twist, queue_size = 1)
-        #self.odom_sub_ = rospy.Subscriber("/orb_slam2_mono/pose", PoseStamped, self.odomCallback)
+        #self.vel_pub_ = rospy.Publisher("/cmd_vel", Twist, queue_size = 1) #for gazebo simulation
+        #self.odom_sub_ = rospy.Subscriber("/orb_slam2_mono/pose", PoseStamped, self.odomCallback) #for gazebo simulation
         self.vel_pub_ = rospy.Publisher("/tello/cmd_vel", Twist, queue_size = 1)
         self.odom_sub_ = rospy.Subscriber("/tello/orb_slam2_mono/pose", PoseStamped, self.odomCallback)
         self.odom_sub_ = rospy.Subscriber("/tello/stop", Bool, self.stopCallback)
@@ -107,6 +107,7 @@ class ForestMotion:
 
         if self.state == 0:
             print('mae')
+            print('q key is emergency stop switch')
             vel_msg.linear.x = self.VEL_SPEAD_
             if self.state_x > self.DIS_:
                 self.time_tmp = time.time()
@@ -129,7 +130,6 @@ class ForestMotion:
             time_diff = time.time() - self.time_tmp
             vel_msg.linear.x = self.p_x*(x_c-now_x)*self.VEL_SPEAD_ + self.d_x * ((x_c-now_x) - self.x_tmp)/ time_diff
             vel_msg.linear.y = self.p_y*(y_c-now_y)*self.VEL_SPEAD_ + self.d_y * ((y_c-now_y) - self.y_tmp)/ time_diff
-            print('PID')
 
             self.x_tmp = x_c-now_x
             self.y_tmp = y_c-now_y

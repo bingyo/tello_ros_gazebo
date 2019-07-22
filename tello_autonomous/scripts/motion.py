@@ -90,6 +90,7 @@ class ForestMotion:
         if self.state == 0:
             vel_msg.linear.x = self.VEL_SPEAD_
             print('mae')
+            print('q key is emergency stop switch')
             if self.state_x > self.DIS_:
                 self.state = 1
 
