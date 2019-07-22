@@ -10,6 +10,7 @@ from geometry_msgs.msg import Twist, Quaternion, PointStamped, Vector3Stamped, P
 from nav_msgs.msg import Odometry
 from std_msgs.msg import String, Float32, Bool, ColorRGBA, Empty
 from std_srvs.srv import Trigger, TriggerResponse, SetBool
+from hector_uav_msgs.srv import EnableMotors
 
 import select, termios, tty
 
@@ -20,7 +21,7 @@ class ForestMotion:
 
         rospy.init_node('automove', anonymous=True)
 
-        self.task_start_ = True 
+        self.task_start_ = False 
         self.odom_update_flag_ = False
         self.task_start_time_ = rospy.Time.now()
 
@@ -28,6 +29,8 @@ class ForestMotion:
         #self.odom_sub_ = rospy.Subscriber("/orb_slam2_mono/pose", PoseStamped, self.odomCallback)
         self.vel_pub_ = rospy.Publisher("/tello/cmd_vel", Twist, queue_size = 1)
         self.odom_sub_ = rospy.Subscriber("/tello/orb_slam2_mono/pose", PoseStamped, self.odomCallback)
+        self.odom_sub_ = rospy.Subscriber("/tello/stop", Bool, self.stopCallback)
+        self._mode_srv = rospy.ServiceProxy('/tello/enable_motors', EnableMotors)
 
         self.control_rate_ = 20
         self.state_x = 0
@@ -41,7 +44,6 @@ class ForestMotion:
         self.DIS_ = 0.04
         
         self.control_timer_ = rospy.Timer(rospy.Duration(1.0 / self.control_rate_), self.controlCallback)
-        self.keyboard_timer_ = rospy.Timer(rospy.Duration(1.0 / self.control_rate_), self.keyboardCallback)
 
     def taskStartCallback(self, msg):
         rospy.loginfo("Task Start")
@@ -69,10 +71,13 @@ class ForestMotion:
         vel_msg = Twist()
 
         if (not self.odom_update_flag_) or (not self.task_start_):
+            self._mode_srv(True)
             vel_msg.linear.x = 0
             vel_msg.linear.y = 0
             vel_msg.linear.z = 0
             self.vel_pub_.publish(vel_msg)
+            time.sleep(3.0)
+            self.task_start_ = True
             return
 
         if self.state_z < 0.04:
@@ -122,21 +127,17 @@ class ForestMotion:
             vel_msg.linear.x = 0
             vel_msg.linear.y = 0
             vel_msg.linear.z = 0
-
+            print('finish')
+            self._mode_srv(False)
+            self.task_start_ = False
+            self.control_timer_.shutdown()
         
 
         self.vel_pub_.publish(vel_msg)
 
-    def keyboardCallback(self, event):
+    def stopCallback(self, event):
+        self.state = -1
 
-        key = getKey()
-        if key in 'q':
-            self.task_start_ = False
-
-        if (key == '\x03'):#Ctrl + c
-            self.control_timer_.shutdown()
-            self.keyboard_timer_.shutdown()
-        
 
 def getKey():
     tty.setraw(sys.stdin.fileno())
