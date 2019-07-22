@@ -1,6 +1,20 @@
 # tello_ros
 ROS Tello driver and gazebo
 
+### Run
+#### Gazebo
+```
+roslaunch tello_driver indoor_slam_gazebo.launch
+rosservice call /enable_motors "enable: true"
+rosrun teleop_twist_keyboard teleop_twist_keyboard.py cmd_vel:=/cmd_vel
+rosrun tello_autonomous circle.py
+```
+
+#### Tello
+```
+roslaunch tello_driver orb.launch
+rosrun tello_autonomous circle.py
+```
 
 ### todo
 
