@@ -27,7 +27,6 @@ class ForestMotion:
         self.task_start_time_ = rospy.Time.now()
 
         #self.vel_pub_ = rospy.Publisher("/cmd_vel", Twist, queue_size = 1) #for gazebo simulation
-        #self.odom_sub_ = rospy.Subscriber("/orb_slam2_mono/pose", PoseStamped, self.odomCallback) #for gazebo simulation
         self.vel_pub_ = rospy.Publisher("/tello/cmd_vel", Twist, queue_size = 1)
         self.odom_sub_ = rospy.Subscriber("/tello/orb_slam2_mono/pose", PoseStamped, self.odomCallback)
         self.odom_sub_ = rospy.Subscriber("/tello/stop", Bool, self.stopCallback)
