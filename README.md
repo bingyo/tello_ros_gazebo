@@ -16,6 +16,12 @@ roslaunch tello_driver orb.launch
 rosrun tello_autonomous circle.py
 ```
 
+
+#### Emergency stop Code 
+```
+rostopic pub /tello/stop std_msgs/Bool "data: false"
+```
+
 ### todo
 
 - Fix intrinsic and extrinsic parameters of camera
